@@ -27,6 +27,7 @@ object Plugin extends sbt.Plugin {
     val compilationLevel       = SettingKey[CompilationLevel]("js-compilation-level",  "Closure Compiler compilation level")
     val warningLevel           = SettingKey[WarningLevel]("js-warning-level", "Closure Compiler warning level")
     val closureOptions         = SettingKey[ClosureOptions]("js-closure-options", "Options for the Google Closure compiler")
+    val builtinExterns         = SettingKey[Boolean]("js-builtin-externs", "Include Google Closure builtin externs")
   }
 
   sealed trait CoffeeVersion { def url: String }
@@ -82,8 +83,8 @@ object Plugin extends sbt.Plugin {
     }
 
   def sourceGraphTask = // : Def.Initialize[Task[Graph]] =
-    (streams, sourceDirectories in js, resourceManaged in js, unmanagedSources in js, templateProperties, downloadDirectory, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions) map {
-      (out, sourceDirs, targetDir, sourceFiles, templateProperties, downloadDir, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions) =>
+    (streams, sourceDirectories in js, resourceManaged in js, unmanagedSources in js, templateProperties, downloadDirectory, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions, builtinExterns) map {
+      (out, sourceDirs, targetDir, sourceFiles, templateProperties, downloadDir, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions, closureExterns) =>
         out.log.debug("sbt-js template properties " + templateProperties)
 
         time(out, "sourceGraphTask") {
@@ -96,7 +97,8 @@ object Plugin extends sbt.Plugin {
             filenameSuffix     = filenameSuffix,
             coffeeVersion      = coffeeVersion,
             coffeeOptions      = coffeeOptions,
-            closureOptions     = closureOptions
+            closureOptions     = closureOptions,
+            addClosureExterns  = closureExterns
           )
 
           sourceFiles.foreach(graph += _)
@@ -137,9 +139,10 @@ object Plugin extends sbt.Plugin {
       prettyPrint in js,
       strictMode in js,
       warningLevel in js,
-      compilationLevel in js
+      compilationLevel in js,
+      builtinExterns in js
     ) apply {
-      (out, variableRenamingPolicy, prettyPrint, strictMode, warningLevel, compilationLevel) =>
+      (out, variableRenamingPolicy, prettyPrint, strictMode, warningLevel, compilationLevel, builtinExterns) =>
         val options = new ClosureOptions
 
         compilationLevel.setOptionsForCompilationLevel(options)
@@ -147,6 +150,9 @@ object Plugin extends sbt.Plugin {
 
         options.variableRenaming = variableRenamingPolicy
         options.prettyPrint = prettyPrint
+
+        if (builtinExterns)
+          options.setEnvironment(ClosureOptions.Environment.BROWSER)
 
         if(strictMode) {
           options.setLanguageIn(ClosureOptions.LanguageMode.ECMASCRIPT5_STRICT)

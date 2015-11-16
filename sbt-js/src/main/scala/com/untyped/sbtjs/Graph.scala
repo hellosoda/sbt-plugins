@@ -17,7 +17,8 @@ case class Graph(
   filenameSuffix: String,
   coffeeVersion: Plugin.CoffeeVersion,
   coffeeOptions: List[CoffeeOption] = List(CoffeeOption.BARE),
-  closureOptions: ClosureOptions
+  closureOptions: ClosureOptions,
+  addClosureExterns: Boolean
 ) extends com.untyped.sbtgraph.Graph {
 
   type S = com.untyped.sbtjs.Source

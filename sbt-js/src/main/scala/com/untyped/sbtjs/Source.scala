@@ -1,6 +1,7 @@
 package com.untyped.sbtjs
 
 import com.google.javascript.jscomp.{
+  AbstractCommandLineRunner => ClosureCmdline,
   SourceFile => ClosureSource,
   Compiler => ClosureCompiler
 }
@@ -23,12 +24,16 @@ trait Source extends com.untyped.sbtgraph.Source {
 
     val myExterns = graph.closureExterns(this)
     val mySources = graph.closureSources(this)
+    val options   = graph.closureOptions
 
     graph.log.debug("  externs:")
     myExterns.foreach(x => graph.log.debug("    " + x))
 
     graph.log.debug("  sources:")
     mySources.foreach(x => graph.log.debug("    " + x))
+
+    if (graph.addClosureExterns)
+      myExterns.addAll(ClosureCmdline.getBuiltinExterns(options))
 
     val result =
       compiler.compile(
