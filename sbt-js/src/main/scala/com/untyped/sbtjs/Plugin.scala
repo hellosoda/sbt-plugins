@@ -187,6 +187,7 @@ object Plugin extends sbt.Plugin {
       warningLevel             := WarningLevel.QUIET,
       compilationLevel         := CompilationLevel.SIMPLE_OPTIMIZATIONS,
       closureOptions          <<= closureOptionsSetting,
+      builtinExterns           := false,
       clean in js             <<= cleanTask,
       js                      <<= compileTask
     )) ++ Seq(
