@@ -22,7 +22,7 @@ trait Source extends com.untyped.sbtgraph.Source {
 
     ClosureCompiler.setLoggingLevel(graph.closureLogLevel)
 
-    val myExterns = graph.closureExterns(this)
+    var myExterns = graph.closureExterns(this)
     val mySources = graph.closureSources(this)
     val options   = graph.closureOptions
 
@@ -33,7 +33,7 @@ trait Source extends com.untyped.sbtgraph.Source {
     mySources.foreach(x => graph.log.debug("    " + x))
 
     if (graph.addClosureExterns)
-      myExterns.addAll(ClosureCmdline.getBuiltinExterns(options))
+      myExterns ++= ClosureCmdline.getBuiltinExterns(options)
 
     val result =
       compiler.compile(

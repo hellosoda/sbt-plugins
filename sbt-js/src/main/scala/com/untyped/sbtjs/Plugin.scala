@@ -83,7 +83,7 @@ object Plugin extends sbt.Plugin {
     }
 
   def sourceGraphTask = // : Def.Initialize[Task[Graph]] =
-    (streams, sourceDirectories in js, resourceManaged in js, unmanagedSources in js, templateProperties, downloadDirectory, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions, builtinExterns) map {
+    (streams, sourceDirectories in js, resourceManaged in js, unmanagedSources in js, templateProperties, downloadDirectory, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions, builtinExterns in js) map {
       (out, sourceDirs, targetDir, sourceFiles, templateProperties, downloadDir, filenameSuffix, coffeeVersion, coffeeOptions, closureOptions, closureExterns) =>
         out.log.debug("sbt-js template properties " + templateProperties)
 
