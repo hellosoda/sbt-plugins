@@ -6,7 +6,7 @@ object Build extends Build {
 
   import ScriptedPlugin._
 
-  val pluginsVersion = "0.8.1-M1"
+  val pluginsVersion = "0.8-hellosoda"
 
   // Libraries ----------------------------------
 
@@ -69,8 +69,10 @@ object Build extends Build {
       version                        := pluginsVersion,
       CrossBuilding.crossSbtVersions := Seq("0.12", "0.13"),
       resolvers                      += untyped,
-      publishTo                     <<= version { v => if (isSnapshot(v)) snapshotPublishTo else releasePublishTo },
-      publishMavenStyle              := false,
+      publishTo := Some("HelloSoda Maven Repository" at 
+                        "s3://maven.hellosoda.com/releases"),
+//      publishTo                     <<= version { v => if (isSnapshot(v)) snapshotPublishTo else releasePublishTo },
+//      publishMavenStyle              := false,
       scriptedBufferLog              := false,
       scalacOptions                  += "-deprecation",
       scalacOptions                  += "-unchecked",
